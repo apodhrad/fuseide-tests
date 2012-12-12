@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Test
+Bundle-SymbolicName: org.jboss.tools.fuse.ui.bot.test
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.jboss.tools.fuse.ui.bot.test.Activator
+Require-Bundle: org.eclipse.core.runtime,
+ org.apache.log4j,
+ org.eclipse.swtbot.go,
+ org.eclipse.swtbot.eclipse.gef.finder,
+ org.jboss.tools.ui.bot.ext;bundle-version="3.2.0"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
