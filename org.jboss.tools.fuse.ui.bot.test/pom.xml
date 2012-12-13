@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	<!-- If not found this parent is taken from nexus -->
 	<parent>
 		<groupId>org.jboss.tools</groupId>
 		<artifactId>parent</artifactId>
@@ -17,8 +18,8 @@
 		<systemProperties>-Dswtbot.test.properties.file=./swtbot.properties</systemProperties>
 	</properties>
 
-	<!-- Fuse IDE Repository -->
 	<repositories>
+	  <!-- Eclipse Indigo Repository -->
 	  <repository>
 	    <id>eclipse-indigo</id>
 	    <url>http://download.eclipse.org/releases/indigo</url>
@@ -30,6 +31,7 @@
 	      <enabled>true</enabled>
 	    </releases>
 	  </repository>
+	  <!-- SWT Bot Ext Repository -->
 	  <repository>
 	    <id>swtbotext</id>
 	    <url>http://download.jboss.org/jbosstools/updates/nightly/coretests/3.3.indigo</url>
@@ -41,6 +43,7 @@
 	      <enabled>true</enabled>
 	    </releases>
 	  </repository>
+	  <!-- Fuse IDE Repository -->
 	  <repository>
 	    <id>fuse-ide</id>
 	    <url>http://repo.fusesource.com/ide</url>
@@ -66,11 +69,13 @@
 					<skip>${swtbot.test.skip}</skip>
 					<forkedProcessTimeoutInSeconds>10800</forkedProcessTimeoutInSeconds>
 					<dependencies combine.children="append">
+					        <!-- Fuse IDE Feature -->
 						<dependency>
 							<type>p2-installable-unit</type>
 							<artifactId>com.fusesource.rider.feature.feature.group</artifactId>
 							<version>0.0.0</version>
 						</dependency>
+						<!-- JDT Feature (includes JUnit) -->
 						<dependency>
 							<type>p2-installable-unit</type>
 							<artifactId>org.eclipse.jdt.feature.group</artifactId>
