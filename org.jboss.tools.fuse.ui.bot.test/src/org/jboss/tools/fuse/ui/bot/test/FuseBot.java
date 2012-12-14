@@ -9,11 +9,12 @@ public class FuseBot {
 
 	public static final String FUSE_CATEGORY = "Fuse IDE";
 
-	public void createNewFuseProject(int index) {
+	public void createNewFuseProject(String archetype) {
 		SWTBotNewObjectWizard wizard = new SWTBotNewObjectWizard();
 		wizard.open("Fuse Project", FUSE_CATEGORY);
 		wizard.next();
-		wizard.bot().table().select(index);
+		wizard.bot().textWithLabel("Filter:").setText(archetype);
+		wizard.bot().table().select(0);
 		wizard.finishWithWait();
 	}
 

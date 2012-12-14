@@ -1,5 +1,6 @@
 package org.jboss.tools.fuse.ui.bot.test.suite;
 
+import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEclipseEditor;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.jboss.tools.fuse.ui.bot.test.FuseBot;
@@ -33,6 +34,7 @@ public class FuseSimpleTest extends SWTTestExt {
 	public static final String CAMEL_VESRION = "Apache Camel 2.9.0.fuse-70-097";
 	public static final String CAMEL_PROJECT = "camel-spring";
 	public static final String CAMEL_FILE = "camel-context.xml";
+	public static final String CAMEL_ARCHETYPE = "camel-archetype-spring";
 
 	private FuseBot fuseBot;
 
@@ -44,7 +46,7 @@ public class FuseSimpleTest extends SWTTestExt {
 	public void fuseTest() {
 		eclipse.maximizeActiveShell();
 
-		fuseBot.createNewFuseProject(7);
+		fuseBot.createNewFuseProject(CAMEL_ARCHETYPE);
 
 		deleteFile(CAMEL_FILE, CAMEL_PROJECT, "src/main/resources", "META-INF", "spring");
 
@@ -64,38 +66,33 @@ public class FuseSimpleTest extends SWTTestExt {
 				CAMEL_VESRION + " (CamelContext: camel-1) started in"));
 		console.terminate();
 
-		updateMessage(1);
-
-		deleteFile("message2.xml", CAMEL_PROJECT, "src", "data");
-
 		fuseBot.createNewCamelTest();
+		SWTBotEditor editor = bot.editorByTitle("CamelContextXmlTest.java");
+		SWTBotEclipseEditor textEditor = editor.toTextEditor();
+		int lineCount = textEditor.getLineCount();
+		for (int i = 0; i < lineCount; i++) {
+			String line = textEditor.getTextOnLine(i);
+			if (line.contains("outputEndpoint.expectedBodiesReceivedInAnyOrder(expectedBodies);")) {
+				textEditor.insertText(i, 0, "//");
+				textEditor.insertText(i + 1, 0, "outputEndpoint.expectedMessageCount(2);");
+				break;
+			}
+		}
+		textEditor.saveAndClose();
 
 		selectCamelTest();
 		runAs("1 JUnit Test");
 
 		JUnitView junitView = new JUnitView();
 		junitView.show();
-		junitView.reRunTest();
 
 		assertEquals("0", junitView.getErrors());
-		// Am I doing something wrong? The test sometimes passes, sometimes not!
-		// assertEquals("0", junitView.getFailures());
-	}
-
-	private void updateMessage(int i) {
-		SWTBotEditor e = packageExplorer.openFile(CAMEL_PROJECT, "src", "data", "message" + i
-				+ ".xml");
-		e.bot().cTabItem("Source").activate();
-		e.bot()
-				.styledText()
-				.setText(
-						"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<something id='" + i
-								+ "'>expectedBody" + i + "</something>");
-		e.saveAndClose();
+		assertEquals("0", junitView.getFailures());
 	}
 
 	private void runAs(String runCommand) {
 		bot.menu("Run").menu("Run As").menu(runCommand).click();
+		bot.waitWhile(new NonSystemJobRunsCondition(), TaskDuration.LONG.getTimeout());
 		bot.waitWhile(new ConsoleCondition(), 15 * TIME_60S, TIME_5S);
 	}
 
