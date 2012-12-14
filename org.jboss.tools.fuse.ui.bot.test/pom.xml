@@ -3,10 +3,10 @@
 	<modelVersion>4.0.0</modelVersion>
 	<!-- If not found this parent is taken from nexus -->
 	<parent>
-		<groupId>org.jboss.tools</groupId>
-		<artifactId>parent</artifactId>
-		<version>3.3.0.Final-SNAPSHOT</version>
-		<relativePath>../build/parent/pom.xml</relativePath>
+	  <groupId>org.jboss.tools</groupId>
+	  <artifactId>parent</artifactId>
+	  <version>3.3.0.Final-SNAPSHOT</version>
+	  <relativePath>../build/parent/pom.xml</relativePath>
 	</parent>
 	<groupId>org.jboss.tools.tests</groupId>
 	<artifactId>org.jboss.tools.fuse.ui.bot.test</artifactId>
@@ -15,7 +15,8 @@
 	<packaging>eclipse-test-plugin</packaging>
 	
 	<properties>
-		<systemProperties>-Dswtbot.test.properties.file=./swtbot.properties</systemProperties>
+	  <systemProperties>-Dswtbot.test.properties.file=./swtbot.properties</systemProperties>
+	  <requirementsDirectory>${project.build.directory}/requirements</requirementsDirectory>
 	</properties>
 
 	<repositories>
@@ -58,33 +59,72 @@
 	</repositories>
 
 	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-surefire-plugin</artifactId>
-				<configuration>
-					<testSuite>org.jboss.tools.fuse.ui.bot.test</testSuite>
-					<testClass>org.jboss.tools.fuse.ui.bot.test.suite.FuseAllTests</testClass>
-					<useUIThread>false</useUIThread>
-					<skip>${swtbot.test.skip}</skip>
-					<forkedProcessTimeoutInSeconds>10800</forkedProcessTimeoutInSeconds>
-					<dependencies combine.children="append">
-					        <!-- Fuse IDE Feature -->
-						<dependency>
-							<type>p2-installable-unit</type>
-							<artifactId>com.fusesource.rider.feature.feature.group</artifactId>
-							<version>0.0.0</version>
-						</dependency>
-						<!-- JDT Feature (includes JUnit) -->
-						<dependency>
-							<type>p2-installable-unit</type>
-							<artifactId>org.eclipse.jdt.feature.group</artifactId>
-							<version>0.0.0</version>
-						</dependency>
-					</dependencies>
-				</configuration>
-			</plugin>
-		</plugins>
+	  <plugins>
+	    <plugin>
+	      <groupId>com.googlecode.maven-download-plugin</groupId>
+	      <artifactId>maven-download-plugin</artifactId>
+	      <version>0.2-SNAPSHOT</version>
+	      <configuration>
+		<outputDirectory>${requirementsDirectory}</outputDirectory>
+	      </configuration>
+	      <executions>
+		<execution>
+		  <id>get-fuseesb</id>
+		  <phase>pre-integration-test</phase>
+		  <goals>
+		    <goal>wget</goal>
+		  </goals>
+		  <configuration>
+		    <url>http://repo.fusesource.com/nexus/content/groups/ea/org/fusesource/esb/fuse-esb/7.1.0.fuse-045/fuse-esb-7.1.0.fuse-045.zip</url>
+		    <unpack>true</unpack>
+		  </configuration>
+		</execution>
+	      </executions>
+	    </plugin>
+	    <plugin>
+	      <artifactId>maven-antrun-plugin</artifactId>
+	      <version>1.3</version>
+	      <executions>
+		<execution>
+		  <id>prepare-fuseesb</id>
+		  <phase>pre-integration-test</phase>
+		  <goals>
+		    <goal>run</goal>
+		  </goals>
+		  <configuration>
+		    <tasks>
+		      <echo file="target/requirements/fuse-esb-7.1.0.fuse-045/etc/users.properties" append="true">admin=admin,admin</echo>
+		    </tasks>
+		  </configuration>
+		</execution>
+	      </executions>
+	    </plugin>
+	    <plugin>
+	      <groupId>org.eclipse.tycho</groupId>
+	      <artifactId>tycho-surefire-plugin</artifactId>
+	      <configuration>
+		<testSuite>org.jboss.tools.fuse.ui.bot.test</testSuite>
+		<testClass>org.jboss.tools.fuse.ui.bot.test.suite.FuseAllTests</testClass>
+		<useUIThread>false</useUIThread>
+		<skip>${swtbot.test.skip}</skip>
+		<forkedProcessTimeoutInSeconds>10800</forkedProcessTimeoutInSeconds>
+		<dependencies combine.children="append">
+		  <!-- Fuse IDE Feature -->
+		  <dependency>
+		    <type>p2-installable-unit</type>
+		    <artifactId>com.fusesource.rider.feature.feature.group</artifactId>
+		    <version>0.0.0</version>
+		  </dependency>
+		  <!-- JDT Feature (includes JUnit) -->
+		  <dependency>
+		    <type>p2-installable-unit</type>
+		    <artifactId>org.eclipse.jdt.feature.group</artifactId>
+		    <version>0.0.0</version>
+		  </dependency>
+		</dependencies>
+	      </configuration>
+	    </plugin>
+	  </plugins>
 	</build>
 	
 </project>

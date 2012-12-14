@@ -3,7 +3,9 @@ package org.jboss.tools.fuse.ui.bot.test.suite;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEclipseEditor;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
+import org.jboss.tools.fuse.ui.bot.test.Activator;
 import org.jboss.tools.fuse.ui.bot.test.FuseBot;
+import org.jboss.tools.fuse.ui.bot.test.FuseEsbServer;
 import org.jboss.tools.fuse.ui.bot.test.condition.ConsoleCondition;
 import org.jboss.tools.fuse.ui.bot.test.editor.CamelEditor;
 import org.jboss.tools.fuse.ui.bot.test.view.ConsoleView;
@@ -11,6 +13,10 @@ import org.jboss.tools.fuse.ui.bot.test.view.JUnitView;
 import org.jboss.tools.ui.bot.ext.SWTTestExt;
 import org.jboss.tools.ui.bot.ext.condition.NonSystemJobRunsCondition;
 import org.jboss.tools.ui.bot.ext.condition.TaskDuration;
+import org.jboss.tools.ui.bot.ext.config.TestConfigurator;
+import org.jboss.tools.ui.bot.ext.helper.ResourceHelper;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -37,9 +43,23 @@ public class FuseSimpleTest extends SWTTestExt {
 	public static final String CAMEL_ARCHETYPE = "camel-archetype-spring";
 
 	private FuseBot fuseBot;
+	private FuseEsbServer fuseEsbServer;
 
 	public FuseSimpleTest() {
 		fuseBot = new FuseBot();
+	}
+
+	@Before
+	public void startFuseEsbServer() {
+		String path = TestConfigurator.getProperty("FUSE_ESB");
+		path = ResourceHelper.getResourceAbsolutePath(Activator.PLUGIN_ID, path);
+		fuseEsbServer = new FuseEsbServer(path);
+		fuseEsbServer.start();
+	}
+
+	@After
+	public void stopFuseEsbServer() {
+		fuseEsbServer.stop();
 	}
 
 	@Test
@@ -81,13 +101,17 @@ public class FuseSimpleTest extends SWTTestExt {
 		textEditor.saveAndClose();
 
 		selectCamelTest();
-		runAs("1 JUnit Test");
+		runAs("2 JUnit Test");
 
 		JUnitView junitView = new JUnitView();
 		junitView.show();
 
 		assertEquals("0", junitView.getErrors());
 		assertEquals("0", junitView.getFailures());
+
+		fuseEsbServer.deployProject(CAMEL_PROJECT);
+
+		System.out.println("OK");
 	}
 
 	private void runAs(String runCommand) {
