@@ -13,10 +13,9 @@ import org.jboss.tools.fuse.ui.bot.test.view.JUnitView;
 import org.jboss.tools.ui.bot.ext.SWTTestExt;
 import org.jboss.tools.ui.bot.ext.condition.NonSystemJobRunsCondition;
 import org.jboss.tools.ui.bot.ext.condition.TaskDuration;
+import org.jboss.tools.ui.bot.ext.config.Annotations.Require;
 import org.jboss.tools.ui.bot.ext.config.TestConfigurator;
 import org.jboss.tools.ui.bot.ext.helper.ResourceHelper;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -35,6 +34,7 @@ import org.junit.Test;
  * @author apodhrad
  * 
  */
+@Require(perspective = "Fuse Integration ")
 public class FuseSimpleTest extends SWTTestExt {
 
 	public static final String CAMEL_VESRION = "Apache Camel 2.9.0.fuse-70-097";
@@ -49,15 +49,17 @@ public class FuseSimpleTest extends SWTTestExt {
 		fuseBot = new FuseBot();
 	}
 
-	@Before
+	// @Before
 	public void startFuseEsbServer() {
 		String path = TestConfigurator.getProperty("FUSE_ESB");
 		path = ResourceHelper.getResourceAbsolutePath(Activator.PLUGIN_ID, path);
 		fuseEsbServer = new FuseEsbServer(path);
 		fuseEsbServer.start();
+
+		assertNotNull(fuseEsbServer.getFuseEsbProcess());
 	}
 
-	@After
+	// @After
 	public void stopFuseEsbServer() {
 		fuseEsbServer.stop();
 	}
@@ -87,6 +89,26 @@ public class FuseSimpleTest extends SWTTestExt {
 		console.terminate();
 
 		fuseBot.createNewCamelTest();
+		fixCamelTest();
+
+		selectCamelTest();
+		runAs("1 JUnit Test");
+
+		JUnitView junitView = new JUnitView();
+		junitView.show();
+
+		assertEquals("0", junitView.getErrors());
+		assertEquals("0", junitView.getFailures());
+
+		// fuseEsbServer.deployProject(CAMEL_PROJECT);
+		// fuseEsbServer.deployProject(CAMEL_PROJECT);
+		//
+		// assertEquals("ACTIVE", fuseEsbServer.getBundleStatus("mycompany"));
+
+		System.out.println("OK");
+	}
+
+	private void fixCamelTest() {
 		SWTBotEditor editor = bot.editorByTitle("CamelContextXmlTest.java");
 		SWTBotEclipseEditor textEditor = editor.toTextEditor();
 		int lineCount = textEditor.getLineCount();
@@ -99,19 +121,6 @@ public class FuseSimpleTest extends SWTTestExt {
 			}
 		}
 		textEditor.saveAndClose();
-
-		selectCamelTest();
-		runAs("2 JUnit Test");
-
-		JUnitView junitView = new JUnitView();
-		junitView.show();
-
-		assertEquals("0", junitView.getErrors());
-		assertEquals("0", junitView.getFailures());
-
-		fuseEsbServer.deployProject(CAMEL_PROJECT);
-
-		System.out.println("OK");
 	}
 
 	private void runAs(String runCommand) {

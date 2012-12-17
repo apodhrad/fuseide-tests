@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
+import org.hamcrest.Matcher;
 import org.jboss.tools.ui.bot.ext.gen.IView;
 
 public class JMXView extends ViewBase {
@@ -22,17 +23,20 @@ public class JMXView extends ViewBase {
 		};
 	}
 
-	public SWTBotTreeItem getFuseEsbProcess() {
+	public SWTBotTreeItem getProcess(Matcher<SWTBotTreeItem> matcher) {
 		SWTBotTreeItem lpItem = bot().tree().expandNode("Local Processes");
 		lpItem.contextMenu("Refresh").click();
 		SWTBotTreeItem[] process = lpItem.getItems();
 		for (int i = 0; i < process.length; i++) {
-			if (process[i].getText().startsWith("Fuse ESB")) {
+			if (matcher.matches(process[i])) {
 				process[i].contextMenu("Refresh").click();
+				// try to avoid TreeItem {Loading...}
+				bot().sleep(5 * 1000);
 				return process[i];
 			}
 		}
 		// not found
 		return null;
 	}
+
 }
