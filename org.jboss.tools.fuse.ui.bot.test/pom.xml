@@ -47,7 +47,7 @@
 	  <!-- Fuse IDE Repository -->
 	  <repository>
 	    <id>fuse-ide</id>
-	    <url>http://repo.fusesource.com/ide</url>
+	    <url>http://repo.fusesource.com/beta/3.0.x</url>
 	    <layout>p2</layout>
 	    <snapshots>
 	      <enabled>true</enabled>
@@ -75,7 +75,7 @@
 		    <goal>wget</goal>
 		  </goals>
 		  <configuration>
-		    <url>http://repo.fusesource.com/nexus/content/groups/ea/org/fusesource/esb/fuse-esb/7.1.0.fuse-045/fuse-esb-7.1.0.fuse-045.zip</url>
+		    <url>http://repo.fusesource.com/nexus/content/groups/ea/org/fusesource/esb/fuse-esb-full/7.1.0.fuse-047/fuse-esb-full-7.1.0.fuse-047.zip</url>
 		    <unpack>true</unpack>
 		  </configuration>
 		</execution>
@@ -93,7 +93,7 @@
 		  </goals>
 		  <configuration>
 		    <tasks>
-		      <echo file="target/requirements/fuse-esb-7.1.0.fuse-045/etc/users.properties" append="true">admin=admin,admin</echo>
+		      <echo file="target/requirements/fuse-esb-7.1.0.fuse-047/etc/users.properties" append="true">admin=admin,admin</echo>
 		    </tasks>
 		  </configuration>
 		</execution>
@@ -112,7 +112,7 @@
 		  <!-- Fuse IDE Feature -->
 		  <dependency>
 		    <type>p2-installable-unit</type>
-		    <artifactId>com.fusesource.rider.feature.feature.group</artifactId>
+		    <artifactId>org.fusesource.ide.feature.feature.group</artifactId>
 		    <version>0.0.0</version>
 		  </dependency>
 		  <!-- JDT Feature (includes JUnit) -->

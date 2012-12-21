@@ -37,7 +37,7 @@ import org.junit.Test;
 @Require(perspective = "Fuse Integration ")
 public class FuseSimpleTest extends SWTTestExt {
 
-	public static final String CAMEL_VESRION = "Apache Camel 2.9.0.fuse-70-097";
+	public static final String CAMEL_VESRION = "Apache Camel 2.10.0.fuse-71-047";
 	public static final String CAMEL_PROJECT = "camel-spring";
 	public static final String CAMEL_FILE = "camel-context.xml";
 	public static final String CAMEL_ARCHETYPE = "camel-archetype-spring";
