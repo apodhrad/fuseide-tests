@@ -47,7 +47,7 @@
 	  <!-- Fuse IDE Repository -->
 	  <repository>
 	    <id>fuse-ide</id>
-	    <url>http://repo.fusesource.com/beta/3.0.x</url>
+	    <url>http://repo.fusesource.com/ide</url>
 	    <layout>p2</layout>
 	    <snapshots>
 	      <enabled>true</enabled>
