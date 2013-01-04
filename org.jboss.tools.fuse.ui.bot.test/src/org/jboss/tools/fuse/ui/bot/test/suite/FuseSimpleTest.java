@@ -138,6 +138,7 @@ public class FuseSimpleTest extends SWTTestExt {
 	}
 
 	private void fixPomFile() {
+		bot.sleep(TIME_5S);
 		projectExplorer.openFile(CAMEL_PROJECT, "pom.xml");
 		SWTBotEditor editor = bot.editorByTitle(CAMEL_PROJECT + "/pom.xml");
 		editor.bot().cTabItem("pom.xml").activate();

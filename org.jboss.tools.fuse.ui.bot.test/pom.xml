@@ -56,6 +56,18 @@
 	      <enabled>true</enabled>
 	    </releases>
 	  </repository>
+	  <!-- M2E Repository -->
+	  <repository>
+	    <id>m2e</id>
+	    <url>http://download.eclipse.org/technology/m2e/releases</url>
+	    <layout>p2</layout>
+	    <snapshots>
+	      <enabled>true</enabled>
+	    </snapshots>
+	    <releases>
+	      <enabled>true</enabled>
+	    </releases>
+	  </repository>
 	</repositories>
 
 	<build>
@@ -120,6 +132,12 @@
 		  <dependency>
 		    <type>p2-installable-unit</type>
 		    <artifactId>org.eclipse.jdt.feature.group</artifactId>
+		    <version>0.0.0</version>
+		  </dependency>
+		  <!-- M2E Feature (ECLIPSE-376)-->
+		  <dependency>
+		    <type>p2-installable-unit</type>
+		    <artifactId>org.eclipse.m2e.feature.feature.group</artifactId>
 		    <version>0.0.0</version>
 		  </dependency>
 		</dependencies>
