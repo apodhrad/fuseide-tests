@@ -87,7 +87,7 @@
 		    <goal>wget</goal>
 		  </goals>
 		  <configuration>
-		    <url>http://repo.fusesource.com/nexus/content/groups/ea/org/fusesource/esb/fuse-esb-full/7.1.0.fuse-047/fuse-esb-full-7.1.0.fuse-047.zip</url>
+		    <url>http://repo.fusesource.com/nexus/content/groups/ea/org/fusesource/esb/fuse-esb-full/7.1.0.fuse-046/fuse-esb-full-7.1.0.fuse-046.zip</url>
 		    <unpack>true</unpack>
 		  </configuration>
 		</execution>
@@ -105,8 +105,8 @@
 		  </goals>
 		  <configuration>
 		    <tasks>
-		      <echo file="target/requirements/fuse-esb-7.1.0.fuse-047/etc/users.properties" append="true">admin=admin,admin</echo>
-		      <copy file="resources/host.key" todir="target/requirements/fuse-esb-7.1.0.fuse-047/etc/"  />
+		      <echo file="target/requirements/fuse-esb-7.1.0.fuse-046/etc/users.properties" append="true">admin=admin,admin</echo>
+		      <copy file="resources/host.key" todir="target/requirements/fuse-esb-7.1.0.fuse-046/etc/"  />
 		    </tasks>
 		  </configuration>
 		</execution>

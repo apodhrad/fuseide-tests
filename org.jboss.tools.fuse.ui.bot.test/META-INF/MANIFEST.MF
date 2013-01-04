@@ -7,6 +7,6 @@ Bundle-Activator: org.jboss.tools.fuse.ui.bot.test.Activator
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.swtbot.go,
  org.eclipse.swtbot.eclipse.gef.finder,
- org.jboss.tools.ui.bot.ext;bundle-version="3.2.0"
+ org.jboss.tools.ui.bot.ext;bundle-version="[3.2.0,3.2.1)"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
