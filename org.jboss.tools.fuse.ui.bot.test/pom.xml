@@ -94,6 +94,7 @@
 		  <configuration>
 		    <tasks>
 		      <echo file="target/requirements/fuse-esb-7.1.0.fuse-047/etc/users.properties" append="true">admin=admin,admin</echo>
+		      <copy file="resources/host.key" todir="target/requirements/fuse-esb-7.1.0.fuse-047/etc/"  />
 		    </tasks>
 		  </configuration>
 		</execution>

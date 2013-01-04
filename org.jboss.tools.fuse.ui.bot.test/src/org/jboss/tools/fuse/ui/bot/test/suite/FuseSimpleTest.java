@@ -16,25 +16,30 @@ import org.jboss.tools.ui.bot.ext.condition.TaskDuration;
 import org.jboss.tools.ui.bot.ext.config.Annotations.Require;
 import org.jboss.tools.ui.bot.ext.config.TestConfigurator;
 import org.jboss.tools.ui.bot.ext.helper.ResourceHelper;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
  * <b>Simple Test:</b>
  * 
  * <ol>
+ * <li>Create and run Fuse ESB server</li>
  * <li>Create a project camel-spring</li>
- * <li>Delete camel-Context.xml and create new one with name camelContext.xml</li>
+ * <li>Delete camel-Context.xml and create new one with name camel-context.xml</li>
  * <li>Add endpoint with uri file:src/data?noop=true</li>
  * <li>Add endpoint with uri file:target/messages/others</li>
- * <li>Select camelContext.xml and Run As > Local Camel Context (without tests)</li>
- * <li>In src/data delete message2.xml and update message1.xml</li>
- * <li>Create camel test case and Run As > JUnit Test</li>
+ * <li>Select the camel xml file and Run As > Local Camel Context (without tests)</li>
+ * <li>Create and edit a camel test case</li>
+ * <li>Select the camel test case and Run As > JUnit Test</li>
+ * <li>Deploy the project to Fuse ESB server</li>
  * </ol>
  * 
- * @author apodhrad
+ * @author Andrej Podhradsky (apodhrad@redhat.com)
  * 
  */
-@Require(perspective = "Fuse Integration ")
+@Require(perspective = "Java")
 public class FuseSimpleTest extends SWTTestExt {
 
 	public static final String CAMEL_VESRION = "Apache Camel 2.10.0.fuse-71-047";
@@ -49,7 +54,16 @@ public class FuseSimpleTest extends SWTTestExt {
 		fuseBot = new FuseBot();
 	}
 
-	// @Before
+	@BeforeClass
+	public static void setSshHome() {
+		bot.menu("Window").menu("Preferences").click();
+		bot.tree().expandNode("General").expandNode("Network Connections").select("SSH2");
+		bot.textWithLabel("SSH2 home:").setText(
+				ResourceHelper.getResourceAbsolutePath(Activator.PLUGIN_ID, ".ssh"));
+		bot.button("OK").click();
+	}
+
+	@Before
 	public void startFuseEsbServer() {
 		String path = TestConfigurator.getProperty("FUSE_ESB");
 		path = ResourceHelper.getResourceAbsolutePath(Activator.PLUGIN_ID, path);
@@ -59,7 +73,7 @@ public class FuseSimpleTest extends SWTTestExt {
 		assertNotNull(fuseEsbServer.getFuseEsbProcess());
 	}
 
-	// @After
+	@After
 	public void stopFuseEsbServer() {
 		fuseEsbServer.stop();
 	}
@@ -100,12 +114,12 @@ public class FuseSimpleTest extends SWTTestExt {
 		assertEquals("0", junitView.getErrors());
 		assertEquals("0", junitView.getFailures());
 
-		// fuseEsbServer.deployProject(CAMEL_PROJECT);
-		// fuseEsbServer.deployProject(CAMEL_PROJECT);
-		//
-		// assertEquals("ACTIVE", fuseEsbServer.getBundleStatus("mycompany"));
-
-		System.out.println("OK");
+		// Apply a workaround described at ECLIPSE-848
+		fixPomFile();
+		
+		// Deploy the project to Fuse ESB
+		fuseEsbServer.deployProject(CAMEL_PROJECT);
+		assertEquals("ACTIVE", fuseEsbServer.getBundleStatus("mycompany"));
 	}
 
 	private void fixCamelTest() {
@@ -117,6 +131,22 @@ public class FuseSimpleTest extends SWTTestExt {
 			if (line.contains("outputEndpoint.expectedBodiesReceivedInAnyOrder(expectedBodies);")) {
 				textEditor.insertText(i, 0, "//");
 				textEditor.insertText(i + 1, 0, "outputEndpoint.expectedMessageCount(2);");
+				break;
+			}
+		}
+		textEditor.saveAndClose();
+	}
+
+	private void fixPomFile() {
+		projectExplorer.openFile(CAMEL_PROJECT, "pom.xml");
+		SWTBotEditor editor = bot.editorByTitle(CAMEL_PROJECT + "/pom.xml");
+		editor.bot().cTabItem("pom.xml").activate();
+		SWTBotEclipseEditor textEditor = editor.toTextEditor();
+		int lineCount = textEditor.getLineCount();
+		for (int i = 0; i < lineCount; i++) {
+			String line = textEditor.getTextOnLine(i);
+			if (line.contains("<artifactId>log4j</artifactId>")) {
+				textEditor.insertText(i + 1, 0, "<scope>provided</scope>");
 				break;
 			}
 		}

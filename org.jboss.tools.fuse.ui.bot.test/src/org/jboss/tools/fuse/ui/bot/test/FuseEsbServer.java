@@ -8,7 +8,6 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarDropDownButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.jboss.tools.fuse.ui.bot.test.condition.ConsoleCondition;
-import org.jboss.tools.fuse.ui.bot.test.condition.ServerStartedCondition;
 import org.jboss.tools.fuse.ui.bot.test.matcher.StartsWith;
 import org.jboss.tools.fuse.ui.bot.test.view.JMXView;
 import org.jboss.tools.ui.bot.ext.condition.NonSystemJobRunsCondition;
@@ -42,7 +41,6 @@ public class FuseEsbServer {
 		ServersView serversView = new ServersView();
 		serversView.show();
 		serversView.startServer(serverName);
-		serversView.bot().waitUntil(new ServerStartedCondition(), 5 * 60 * 1000);
 	}
 
 	public void stop() {
@@ -77,9 +75,9 @@ public class FuseEsbServer {
 		PropertiesView propertiesView = new PropertiesView();
 		propertiesView.show();
 		propertiesView.bot().textWithLabel("Search: ").typeText(bundle);
-		
+
 		SWTBotTable table = propertiesView.bot().table();
-		
+
 		assertTrue("No row in a table", table.rowCount() > 0);
 		return table.cell(0, 17);
 	}
