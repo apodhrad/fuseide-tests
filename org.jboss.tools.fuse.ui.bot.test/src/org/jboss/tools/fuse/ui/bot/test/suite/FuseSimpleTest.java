@@ -56,7 +56,7 @@ public class FuseSimpleTest extends SWTTestExt {
 		fuseBot = new FuseBot();
 	}
 
-	@BeforeClass
+//	@BeforeClass
 	public static void setSshHome() {
 		bot.menu("Window").menu("Preferences").click();
 		bot.tree().expandNode("General").expandNode("Network Connections").select("SSH2");
@@ -65,7 +65,7 @@ public class FuseSimpleTest extends SWTTestExt {
 		bot.button("OK").click();
 	}
 
-	@BeforeClass
+//	@BeforeClass
 	public static void setMavenSettings() {
 		bot.menu("Window").menu("Preferences").click();
 		bot.tree().expandNode("Maven").select("User Settings");
@@ -78,7 +78,7 @@ public class FuseSimpleTest extends SWTTestExt {
 	@Before
 	public void startFuseEsbServer() {
 		String path = TestConfigurator.getProperty("FUSE_ESB");
-		path = ResourceHelper.getResourceAbsolutePath(Activator.PLUGIN_ID, path);
+//		path = ResourceHelper.getResourceAbsolutePath(Activator.PLUGIN_ID, path);
 		fuseEsbServer = new FuseEsbServer(path);
 		fuseEsbServer.start();
 

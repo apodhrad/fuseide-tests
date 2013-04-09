@@ -8,7 +8,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
 	FuseSimpleTest.class,
 //	FuseProjectCreationTest.class,
-//	FuseVersionTest.class
+	FuseVersionTest.class
 	})
 @RunWith(RequirementAwareSuite.class)
 public class FuseAllTests {
