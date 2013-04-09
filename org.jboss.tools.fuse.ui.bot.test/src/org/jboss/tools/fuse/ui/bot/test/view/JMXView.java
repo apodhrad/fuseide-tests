@@ -12,12 +12,12 @@ public class JMXView extends ViewBase {
 	public JMXView() {
 		viewObject = new IView() {
 			public String getName() {
-				return "JMX Explorer";
+				return "Fuse JMX Navigator";
 			}
 
 			public List<String> getGroupPath() {
 				List<String> l = new Vector<String>();
-				l.add("Fuse IDE");
+				l.add("Fuse");
 				return l;
 			}
 		};
@@ -29,7 +29,6 @@ public class JMXView extends ViewBase {
 		SWTBotTreeItem[] process = lpItem.getItems();
 		for (int i = 0; i < process.length; i++) {
 			if (matcher.matches(process[i])) {
-				process[i].contextMenu("Refresh").click();
 				// try to avoid TreeItem {Loading...}
 				bot().sleep(5 * 1000);
 				return process[i];

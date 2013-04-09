@@ -10,6 +10,7 @@ import org.jboss.tools.fuse.ui.bot.test.condition.ConsoleCondition;
 import org.jboss.tools.fuse.ui.bot.test.editor.CamelEditor;
 import org.jboss.tools.fuse.ui.bot.test.view.ConsoleView;
 import org.jboss.tools.fuse.ui.bot.test.view.JUnitView;
+import org.jboss.tools.fuse.ui.bot.test.wizard.FuseProject;
 import org.jboss.tools.ui.bot.ext.SWTTestExt;
 import org.jboss.tools.ui.bot.ext.condition.NonSystemJobRunsCondition;
 import org.jboss.tools.ui.bot.ext.condition.TaskDuration;
@@ -30,7 +31,8 @@ import org.junit.Test;
  * <li>Delete camel-Context.xml and create new one with name camel-context.xml</li>
  * <li>Add endpoint with uri file:src/data?noop=true</li>
  * <li>Add endpoint with uri file:target/messages/others</li>
- * <li>Select the camel xml file and Run As > Local Camel Context (without tests)</li>
+ * <li>Select the camel xml file and Run As > Local Camel Context (without
+ * tests)</li>
  * <li>Create and edit a camel test case</li>
  * <li>Select the camel test case and Run As > JUnit Test</li>
  * <li>Deploy the project to Fuse ESB server</li>
@@ -39,10 +41,10 @@ import org.junit.Test;
  * @author Andrej Podhradsky (apodhrad@redhat.com)
  * 
  */
-@Require(perspective = "Java")
+@Require(perspective = "Fuse Integration ")
 public class FuseSimpleTest extends SWTTestExt {
 
-	public static final String CAMEL_VESRION = "Apache Camel 2.10.0.fuse-71-047";
+	public static final String CAMEL_VESRION = "Apache Camel 2.10.0.redhat";
 	public static final String CAMEL_PROJECT = "camel-spring";
 	public static final String CAMEL_FILE = "camel-context.xml";
 	public static final String CAMEL_ARCHETYPE = "camel-archetype-spring";
@@ -60,6 +62,16 @@ public class FuseSimpleTest extends SWTTestExt {
 		bot.tree().expandNode("General").expandNode("Network Connections").select("SSH2");
 		bot.textWithLabel("SSH2 home:").setText(
 				ResourceHelper.getResourceAbsolutePath(Activator.PLUGIN_ID, ".ssh"));
+		bot.button("OK").click();
+	}
+
+	@BeforeClass
+	public static void setMavenSettings() {
+		bot.menu("Window").menu("Preferences").click();
+		bot.tree().expandNode("Maven").select("User Settings");
+		bot.text(1).setText(
+				ResourceHelper.getResourceAbsolutePath(Activator.PLUGIN_ID,
+						"resources/settings.xml"));
 		bot.button("OK").click();
 	}
 
@@ -82,7 +94,7 @@ public class FuseSimpleTest extends SWTTestExt {
 	public void fuseTest() {
 		eclipse.maximizeActiveShell();
 
-		fuseBot.createNewFuseProject(CAMEL_ARCHETYPE);
+		new FuseProject(CAMEL_ARCHETYPE).execute();
 
 		deleteFile(CAMEL_FILE, CAMEL_PROJECT, "src/main/resources", "META-INF", "spring");
 
@@ -97,9 +109,11 @@ public class FuseSimpleTest extends SWTTestExt {
 		runAs("2 Local Camel Context (without tests)");
 
 		ConsoleView console = new ConsoleView();
-		assertTrue(console.getConsoleText().contains(CAMEL_VESRION + " starting"));
-		assertTrue(console.getConsoleText().contains(
-				CAMEL_VESRION + " (CamelContext: camel-1) started in"));
+		// assertTrue(console.getConsoleText().contains(CAMEL_VESRION +
+		// " starting"));
+		assertTrue(console.getConsoleText().contains(CAMEL_VESRION));
+		assertTrue(console.getConsoleText().contains("started in"));
+		// CAMEL_VESRION + " (CamelContext: camel-1) started in"));
 		console.terminate();
 
 		fuseBot.createNewCamelTest();
@@ -116,7 +130,7 @@ public class FuseSimpleTest extends SWTTestExt {
 
 		// Apply a workaround described at ECLIPSE-848
 		fixPomFile();
-		
+
 		// Deploy the project to Fuse ESB
 		fuseEsbServer.deployProject(CAMEL_PROJECT);
 		assertEquals("ACTIVE", fuseEsbServer.getBundleStatus("mycompany"));

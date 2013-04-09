@@ -7,7 +7,7 @@ import org.jboss.tools.ui.bot.ext.wizards.SWTBotNewObjectWizard;
 
 public class FuseBot {
 
-	public static final String FUSE_CATEGORY = "Fuse IDE";
+	public static final String FUSE_CATEGORY = "Fuse Plugins for Eclipse";
 
 	public void createNewFuseProject(String archetype) {
 		SWTBotNewObjectWizard wizard = new SWTBotNewObjectWizard();

@@ -19,7 +19,7 @@ import org.jboss.tools.ui.bot.ext.wizards.SWTBotNewObjectWizard;
 
 public class FuseEsbServer {
 
-	public static final String FUSE_ESB_SERVER = "Fuse ESB Enterprise 7.x Server";
+	public static final String FUSE_ESB_SERVER = "Red Hat JBoss Fuse 6.x Server";
 	public static final String TOOLTIP_DEPLOY = "Deploys the bundle to...";
 
 	private String serverName;
@@ -34,7 +34,7 @@ public class FuseEsbServer {
 		wizard.bot().textWithLabel("User Name:").setText("admin");
 		wizard.bot().textWithLabel("Password: ").setText("admin");
 		wizard.finishWithWait();
-		serverName = "fuse-esb";
+		serverName = "jboss-fuse-6.0.0.redhat-024";
 	}
 
 	public void start() {
@@ -54,13 +54,18 @@ public class FuseEsbServer {
 		if (fuseEsbProcess == null) {
 			throw new IllegalStateException("Fuse ESB server is not started");
 		}
+		fuseEsbProcess.contextMenu("Refresh").click();
 		ProjectExplorer projectExplorer = new ProjectExplorer();
 		projectExplorer.show();
 		projectExplorer.selectProject(projectName);
+		projectExplorer.bot().sleep(5 * 1000);
 		SWTBotToolbarDropDownButton b = new SWTBot()
 				.toolbarDropDownButtonWithTooltip(TOOLTIP_DEPLOY);
 		b.menuItem(fuseEsbProcess.getText()).click();
 		b.pressShortcut(Keystrokes.ESC);
+		// SWTBotTreeItem item = projectExplorer.selectTreeItem(projectName, new
+		// String[] {});
+		// item.contextMenu("Deploy to...").contextMenu(fuseEsbProcess.getText()).click();
 		projectExplorer.bot().sleep(5 * 1000);
 		projectExplorer.bot().waitWhile(new NonSystemJobRunsCondition(),
 				TaskDuration.LONG.getTimeout());
@@ -68,11 +73,16 @@ public class FuseEsbServer {
 	}
 
 	public String getBundleStatus(String bundle) {
+		PropertiesView propertiesView = new PropertiesView();
+		propertiesView.show();
+		propertiesView
+				.getToolbarButtonWitTooltip("Pins this property view to the current selection")
+				.click();
+
 		SWTBotTreeItem fuseEsbProcess = getFuseEsbProcess();
 		fuseEsbProcess.expand();
 		fuseEsbProcess.select("Bundles");
 
-		PropertiesView propertiesView = new PropertiesView();
 		propertiesView.show();
 		propertiesView.bot().textWithLabel("Search: ").typeText(bundle);
 
@@ -85,6 +95,6 @@ public class FuseEsbServer {
 	public SWTBotTreeItem getFuseEsbProcess() {
 		JMXView jmxView = new JMXView();
 		jmxView.show();
-		return jmxView.getProcess(new StartsWith("Fuse ESB"));
+		return jmxView.getProcess(new StartsWith("JBoss Fuse"));
 	}
 }
