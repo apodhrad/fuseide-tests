@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.jboss.tools.fuse.ui.bot.feature_0.0.0.jar" id="org.jboss.tools.fuse.ui.bot.feature" version="0.0.0"/>
+</site>
